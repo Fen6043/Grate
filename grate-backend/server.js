@@ -62,7 +62,7 @@ app.get("/api/taglist",async (req,res) => {
 
 app.post("/api/addgames", upload.single("imagefile") ,async (req,res) =>{
     //console.log(req.body)
-    const imagefile = "";
+    let imagefile = "";
     if(req.file){
         imagefile = req.file.path;
     }
