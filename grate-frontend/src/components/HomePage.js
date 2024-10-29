@@ -5,7 +5,7 @@ import {parseISO,format} from 'date-fns'
 import { useNavigate } from "react-router-dom";
 
 function HomePage(){
-    const {category,searchResult, sortOption, setSortOption, isAscending, setIsAscending} = useContext(GameContext);
+    const {category,searchResult, sortOption, setSortOption, isAscending, setIsAscending, remove} = useContext(GameContext);
     const [gameLists, setGameLists] = useState([]);
     const [filteredGameList, setfilteredGameList] = useState([]);
     
@@ -18,13 +18,15 @@ function HomePage(){
     useEffect(()=>{
         axio.get('http://localhost:5000/api/gameslist')
         .then(response => {
-            //console.log(response.data);
+            console.log(response.data);
             setGameLists(response.data);
         })
         .catch(error => {
             console.error(`Error Ocuured while getting gamelist: ${error}`);
         })
     },[]);  
+
+    useEffect(() => {console.log(remove)},[remove])
 
     useEffect(()=>{
         let filteredList = (category === "") ? gameLists : gameLists.filter(gameList => gameList.Genre.split("|").includes(category));
@@ -91,7 +93,7 @@ function HomePage(){
                         backgroundImage: `url(${imgLoc})`
                     }}
                 >
-                    <div className="relative p-2 z-10 max-w-56 opacity-0 transition duration-300 hover:opacity-100 hover:backdrop-blur-sm ">
+                    <div className={`relative z-10 ${remove ? "max-w-48" : "max-w-52"} opacity-0 transition duration-300 hover:opacity-100 hover:backdrop-blur-sm`}>
                         <div className="bg-orange-400 p-2 rounded-sm">
                         <h2 className="text-white text-lg font-bold break-words">{gameList.GName}</h2>
                         <h3 className="text-white">Release Date: <br />{formattedDate}</h3>
@@ -103,11 +105,17 @@ function HomePage(){
                         </div>
                         <h3 className="text-white">{gameList.AvgRating}</h3>
                     </div>
+
+                    {/* remove tile */}
+                    {
+                        remove && (<div className=" absolute h-4 w-4 rounded-full border-2 border-black hover:border-white cursor-pointer select-none text-white flex items-center justify-center top-2 right-2 bg-red-600">-</div>)
+                    }
+                    
                 </div>
             )})}
 
-            {/* to add new items */}
-            <div onClick={handleClick} className="absolute bottom-3 right-3 bg-red-600 rounded-full p-2 cursor-pointer">
+            {/* to add new items */}                      
+            <div onClick={handleClick} className="fixed bottom-3 right-3 bg-red-600 rounded-full p-2 cursor-pointer">
                 <span className=" pointer-events-none select-none">+</span>
             </div>
              

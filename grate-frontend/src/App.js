@@ -4,7 +4,7 @@ import NavigationBar from './components/NavigationBar'
 import HomePage from './components/HomePage';
 import GameProvider from './context/GameProvider';
 import SearchBar from './components/SearchBar';
-import AboutPage from './components/AboutPage';
+import Trial from './components/Trial';
 import AddForm from './components/AddForm';
 
 function App() {
@@ -12,11 +12,14 @@ function App() {
     <Router>
     <Routes>
       <Route path = "/" element = {<GameProvider>
+      <div className='flex flex-col'>
       <NavigationBar/>
       <SearchBar/>
+      </div>
       <HomePage/>
     </GameProvider>}/>
       <Route path = "/addForm" element = {<AddForm/>}/>
+      <Route path= "/trial" element = {<Trial/>}/>
     </Routes>
     </Router>
   );

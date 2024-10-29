@@ -8,8 +8,9 @@ function GameProvider({ children }){
     const [searchResult, setSearchResult] = useState("");
     const [sortOption, setSortOption] = useState("");
     const [isAscending, setIsAscending] = useState(true);
+    const [remove, setRemove] = useState(false);
     return(
-        <GameContext.Provider value={{userId,setUserId,category,setCategory,searchResult,setSearchResult,sortOption,setSortOption,isAscending,setIsAscending}}>
+        <GameContext.Provider value={{userId,setUserId,category,setCategory,searchResult,setSearchResult,sortOption,setSortOption,isAscending,setIsAscending,remove,setRemove}}>
         {children}
         </GameContext.Provider>
     );

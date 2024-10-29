@@ -6,7 +6,7 @@ import { GameContext } from "../context/GameProvider";
 
 function SearchBar(){
     const [tagLists, setTagLists] = useState([]);
-    const {setSearchResult, setCategory, sortOption, setSortOption, isAscending, setIsAscending} = useContext(GameContext);
+    const {setSearchResult, setCategory, sortOption, setSortOption, isAscending, setIsAscending, remove, setRemove} = useContext(GameContext);
     function changeSortOrder(){
         setIsAscending(!isAscending);
     }
@@ -20,9 +20,12 @@ function SearchBar(){
 
     },[]);
 
+    // useEffect(() => {
+    //     console.log(remove);
+    // },[remove])
+
     return(
-        <>
-            <div className="bg-amber-400 m-2 border-2 border-black flex justify-between">
+            <div className="bg-amber-400 m-2 mt-14 border-2 border-black flex justify-between">
                 <div className="flex">
                     <input type="text" onChange={e => setSearchResult(e.target.value)} placeholder="Search" className="my-2 ml-2 pl-2"/>
                     <button className="bg-white my-2">
@@ -30,6 +33,7 @@ function SearchBar(){
                     </button>
                 </div>
                 <div className="flex m-2 space-x-3">
+                    <button onClick={() => {setRemove(!remove)}} className={`${remove ? "bg-green-600" : "bg-red-600"} px-4 mx-2 border-2 hover:border-black`}><b>-</b></button>
                     <label>Category:</label>
                     <select onChange={e=>setCategory(e.target.value)}>
                         <option value="">All</option>
@@ -51,7 +55,6 @@ function SearchBar(){
                     </button>
                 </div>
             </div>
-        </>
     );
 }
 
