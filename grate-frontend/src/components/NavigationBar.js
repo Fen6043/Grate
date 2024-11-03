@@ -4,7 +4,7 @@ import Logo from "../GamerBug-removebg-preview.png";
 
 function NavigationBar(){
     return(
-        <div className = 'fixed w-full flex justify-between bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500'>
+        <div className = 'fixed z-20 w-full flex justify-between bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500'>
             <div className = 'flex'>
                 <img src = {Logo} alt = "GameRLogo" className = 'p-2 w-36 h-15' />
             </div>

@@ -29,7 +29,8 @@ function AddForm(){
     }
   }
 
-  const formSubmit = async () => {
+  const formSubmit = async (event) => {
+    event.preventDefault(); //use this to prevent reload of page
     const formdata = new FormData();
     const genreList = selectedTagList.join('|');
     formdata.append("imagefile",image);
@@ -38,15 +39,17 @@ function AddForm(){
     formdata.append("ReleaseDate",releaseDate);
     formdata.append("AvgRating","0");
     formdata.append("StorePage",storePage);
-    
+     
     const response = await axios.post('http://localhost:5000/api/addgames',formdata,{
       headers: {
         'Content-Type' : 'multipart/form-data'
       }
     });
 
+    console.log(response)
     if(response.status === 201){
       alert("Added Successfully");
+      window.location.reload(); // Reload the page after successful submission
     }
     else{
       console.log(response.data)
@@ -54,10 +57,10 @@ function AddForm(){
   }
 
   return(
-    <div className="flex flex-col inset-0 justify-center items-center h-screen">
-    <div className="relative max-w-80 mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+    <div className="flex flex-col z-0 inset-0 justify-center items-center h-screen">
+    <div className={`${openGenre ? " pointer-events-none select-none" :""} relative max-w-80 mx-auto p-6 bg-white rounded-lg shadow-md mt-10`}>
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Add Game</h2>
-      <form onSubmit={formSubmit}>
+      <form onSubmit={(e) => formSubmit(e)}>
         {/* Title Input */}
         <div className="mb-4">
           <label htmlFor="GName" className="block text-gray-700 text-sm font-bold mb-2">

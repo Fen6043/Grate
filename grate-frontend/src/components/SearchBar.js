@@ -33,7 +33,18 @@ function SearchBar(){
                     </button>
                 </div>
                 <div className="flex m-2 space-x-3">
-                    <button onClick={() => {setRemove(!remove)}} className={`${remove ? "bg-green-600" : "bg-red-600"} px-4 mx-2 border-2 hover:border-black`}><b>-</b></button>
+
+                    {/* <button onClick={() => {setRemove(!remove)}} className={`${remove ? "bg-green-600" : "bg-red-600"} px-4 mx-2 border-2 hover:border-black`}><b>-</b></button>
+                     */}
+                    <button
+                      onClick={() => setRemove(!remove)}
+                      className={`flex items-center justify-between w-12 p-1 rounded-full transition duration-300 ease-in-out ${
+                        remove ? 'bg-red-500' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span className={`w-4 h-4 flex items-center justify-center rounded-full transition transform duration-300 ease-in-out ${remove ? 'translate-x-6 bg-white' : 'bg-white text-red-500'}`}><b>-</b></span>
+                    </button>
+
                     <label>Category:</label>
                     <select onChange={e=>setCategory(e.target.value)}>
                         <option value="">All</option>
@@ -50,9 +61,11 @@ function SearchBar(){
                         <option value="RDate">Release Date</option>
                         <option value="Popularity">Popularity</option>
                     </select>
+
                     <button onClick={changeSortOrder}>
                         {isAscending ? <img src= {Arrow} alt="arrowUp" className="w-6 h-7"/> : <img src= {Arrow} alt="arrowDown" className="w-6 h-7 rotate-180"/>}
                     </button>
+
                 </div>
             </div>
     );

@@ -6,6 +6,7 @@ import GameProvider from './context/GameProvider';
 import SearchBar from './components/SearchBar';
 import Trial from './components/Trial';
 import AddForm from './components/AddForm';
+import AddTag from './components/AddTag';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
       <HomePage/>
     </GameProvider>}/>
       <Route path = "/addForm" element = {<AddForm/>}/>
-      <Route path= "/trial" element = {<Trial/>}/>
+      <Route path = "/trial" element = {<Trial/>}/>
+      <Route path = "/addTag" element= {<AddTag/>} />
     </Routes>
     </Router>
   );

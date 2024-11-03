@@ -3,11 +3,13 @@ import React, {useContext,useState,useEffect} from "react";
 import axio from 'axios';
 import {parseISO,format} from 'date-fns'
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function HomePage(){
     const {category,searchResult, sortOption, setSortOption, isAscending, setIsAscending, remove} = useContext(GameContext);
     const [gameLists, setGameLists] = useState([]);
     const [filteredGameList, setfilteredGameList] = useState([]);
+    const [openGenre,setOpenGenre] = useState(false);
     
     // to navigate to add form
     const navigate = useNavigate();
@@ -15,18 +17,36 @@ function HomePage(){
         navigate("/addForm");
     }
 
-    useEffect(()=>{
-        axio.get('http://localhost:5000/api/gameslist')
+    //fetch gamelist from db
+    const fetchGame = async()=>{
+        await axio.get('http://localhost:5000/api/gameslist')
         .then(response => {
-            console.log(response.data);
+            // console.log(response.data);
             setGameLists(response.data);
         })
         .catch(error => {
             console.error(`Error Ocuured while getting gamelist: ${error}`);
         })
-    },[]);  
+    }
 
-    useEffect(() => {console.log(remove)},[remove])
+    // remove game
+    const removeGame = async(id) => {
+        //console.log(id);
+        try {
+            const response = await axio.delete(`http://localhost:5000/api/deletegame/${id}`);
+            console.log(response.data); // Set the success message
+            fetchGame();
+          } catch (error) {
+            // Set the error message if there is an issue
+            console.log(error.response ? error.response.data : `Error: ${error.message}`);
+          }
+        
+    }
+
+    //load gamelist
+    useEffect(() => {
+        fetchGame();
+    },[]);  
 
     useEffect(()=>{
         let filteredList = (category === "") ? gameLists : gameLists.filter(gameList => gameList.Genre.split("|").includes(category));
@@ -50,7 +70,7 @@ function HomePage(){
                 sortedGameList.sort((a,b) => {
                     const aReleaseDate = new Date(a.ReleaseDate);
                     const bReleaseDate = new Date(b.ReleaseDate);
-                    return bReleaseDate - aReleaseDate;
+                    return aReleaseDate - bReleaseDate;
     
                 });
             }
@@ -58,7 +78,7 @@ function HomePage(){
                 sortedGameList.sort((a,b) => {
                     const aReleaseDate = new Date(a.ReleaseDate);
                     const bReleaseDate = new Date(b.ReleaseDate);
-                    return aReleaseDate - bReleaseDate;
+                    return bReleaseDate - aReleaseDate;
     
                 });
             }
@@ -75,50 +95,69 @@ function HomePage(){
     },[sortOption,isAscending])
 
     return(
-        <div className = 'flex flex-wrap gap-4 p-4'>
-            {filteredGameList.map((gameList,index1) => {
-                const tags = gameList.Genre.split('|');
-                const releaseDate = parseISO(gameList.ReleaseDate);
-                const formattedDate = format(releaseDate, 'MMMM do, yyyy');
-                //console.log(formattedDate)
+        <div className ="flex items-start justify-center">
+            <div className = {`${openGenre ? "pointer-events-none select-none blur-md" : ""} flex flex-wrap gap-4 p-4 items-center justify-center`}>
+                {filteredGameList.map((gameList,index1) => {
+                    const tags = gameList.Genre.split('|');
+                    const releaseDate = parseISO(gameList.ReleaseDate);
+                    const formattedDate = format(releaseDate, 'MMMM do, yyyy');
+                    //console.log(formattedDate)
 
-                //image location
-                let imgLoc = "http://localhost:5000/" + gameList.ImgFilePath;
-                imgLoc = imgLoc.replaceAll('\\','/');
+                    //image location
+                    let imgLoc = "http://localhost:5000/" + gameList.ImgFilePath;
+                    imgLoc = imgLoc.replaceAll('\\','/');
 
-                return (
-                <div key= {index1} className="relative bg-cover bg-center h-72 w-1/6 min-w-60 bg-black m-2 border-2 border-black hover:border-orange-500 flex flex-wrap p-4"
-                    style=
-                    {{
-                        backgroundImage: `url(${imgLoc})`
-                    }}
-                >
-                    <div className={`relative z-10 ${remove ? "max-w-48" : "max-w-52"} opacity-0 transition duration-300 hover:opacity-100 hover:backdrop-blur-sm`}>
-                        <div className="bg-orange-400 p-2 rounded-sm">
-                        <h2 className="text-white text-lg font-bold break-words">{gameList.GName}</h2>
-                        <h3 className="text-white">Release Date: <br />{formattedDate}</h3>
+                    return (
+                    <div key = {`${index1}0`}>
+                    <div key = {`${index1}1`} className="relative bg-cover bg-center h-72 w-1/6 min-w-60 bg-black m-2 pl-1 pt-1 border-2 border-black hover:border-orange-500 flex flex-wrap"
+                        style=
+                        {{
+                            backgroundImage: `url(${imgLoc})`
+                        }}
+                    >
+                        <div className={`relative z-10 ${remove ? "max-w-48" : "max-w-52"} opacity-0 transition duration-300 hover:opacity-100 hover:backdrop-blur-sm`}>
+                            <div className="bg-orange-400 p-2 rounded-sm">
+                            <h2 className="text-white text-lg font-bold break-words">{gameList.GName}</h2>
+                            <h3 className="text-white">Release Date: <br />{formattedDate}</h3>
+                            </div>
+                            <div className="flex flex-wrap mt-2">
+                                {tags.map((tag,index2) => (
+                                    <span key={index2} className="bg-gray-200 text-gray-800 text-xs break-words px-2 py-1 rounded mr-2 mb-2">{tag}</span>
+                                ))}
+                            </div>
                         </div>
-                        <div className="flex flex-wrap mt-2">
-                            {tags.map((tag,index2) => (
-                                <span key={index2} className="bg-gray-200 text-gray-800 text-xs break-words px-2 py-1 rounded mr-2 mb-2">{tag}</span>
-                            ))}
-                        </div>
-                        <h3 className="text-white">{gameList.AvgRating}</h3>
+
+                        {/* remove tile */}
+                        {
+                            remove && (<div onClick={() => removeGame(gameList.GameID)} className=" absolute h-4 w-4 rounded-full border-2 border-black hover:border-white cursor-pointer select-none text-white flex items-center justify-center top-2 right-2 bg-red-600">-</div>)
+                        }
                     </div>
-
-                    {/* remove tile */}
-                    {
-                        remove && (<div className=" absolute h-4 w-4 rounded-full border-2 border-black hover:border-white cursor-pointer select-none text-white flex items-center justify-center top-2 right-2 bg-red-600">-</div>)
-                    }
                     
-                </div>
-            )})}
+                    {/* star rating */}
+                    <div key = {`${index1}2`} className="px-4 h-6 min-w-60">
+                        <span onClick={() => {setOpenGenre(true)}} className="text-xl text-amber-500 hover:text-2xl cursor-pointer select-none">★</span>
+                        <span className="mx-1 px-2 font-sans bg-white rounded-md pointer-events-none select-none">{gameList.AvgRating}</span>
+                    </div>
+                    </div>
+                )})}
 
-            {/* to add new items */}                      
-            <div onClick={handleClick} className="fixed bottom-3 right-3 bg-red-600 rounded-full p-2 cursor-pointer">
-                <span className=" pointer-events-none select-none">+</span>
+                {/* to add new items */}                      
+                <div onClick={handleClick} className="fixed bottom-3 right-3 bg-red-600 rounded-full p-2 cursor-pointer">
+                    <span className=" pointer-events-none select-none">+</span>
+                </div>   
             </div>
-             
+            
+            {/* open genre */}
+            {openGenre && (
+                <div className="fixed bg-white border-2 border-black p-4 mt-4 w-72 h-48 z-50 rounded-lg">
+                  <div className="flex justify-between">
+                    <h1 className="select-none"><b>Select Genre</b></h1>
+                    <h1 onClick={() => {setOpenGenre(false)}} className=" text-red-700 cursor-pointer select-none"><b>x</b></h1>
+                  </div>
+                  <div className="flex flex-wrap">test</div>
+
+                </div>
+            )}
         </div>
     );
 }
