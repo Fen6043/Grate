@@ -4,12 +4,14 @@ import axio from 'axios';
 import {parseISO,format} from 'date-fns'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import StarRating from "./StarRating";
 
 function HomePage(){
     const {category,searchResult, sortOption, setSortOption, isAscending, setIsAscending, remove} = useContext(GameContext);
     const [gameLists, setGameLists] = useState([]);
     const [filteredGameList, setfilteredGameList] = useState([]);
-    const [openGenre,setOpenGenre] = useState(false);
+    const [openRating,setOpenRating] = useState(false);
+    const [gameId, setGameId] = useState(0);
     
     // to navigate to add form
     const navigate = useNavigate();
@@ -43,6 +45,12 @@ function HomePage(){
         
     }
 
+    //Rating function
+    const RateGame = (getgameId) =>{
+        setGameId(getgameId);
+        setOpenRating(true);
+    }
+
     //load gamelist
     useEffect(() => {
         fetchGame();
@@ -56,6 +64,20 @@ function HomePage(){
         setIsAscending(true);
 
     },[gameLists,category,searchResult]);
+
+    //To remove scrolling in background while rating is up
+    useEffect(() => {
+        if (openRating) {
+            document.body.classList.add('overflow-hidden');
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Cleanup function to remove the class when component unmounts
+        return () => {
+            document.body.classList.remove('overflow-hidden');
+        };
+    }, [openRating]);
 
     useEffect(() => {
         let sortedGameList = [...filteredGameList];
@@ -96,7 +118,7 @@ function HomePage(){
 
     return(
         <div className ="flex items-start justify-center">
-            <div className = {`${openGenre ? "pointer-events-none select-none blur-md" : ""} flex flex-wrap gap-4 p-4 items-center justify-center`}>
+            <div className = {`${openRating ? "pointer-events-none select-none blur-md" : ""} flex flex-wrap gap-4 p-4 items-center justify-center`}>
                 {filteredGameList.map((gameList,index1) => {
                     const tags = gameList.Genre.split('|');
                     const releaseDate = parseISO(gameList.ReleaseDate);
@@ -135,7 +157,7 @@ function HomePage(){
                     
                     {/* star rating */}
                     <div key = {`${index1}2`} className="px-4 h-6 min-w-60">
-                        <span onClick={() => {setOpenGenre(true)}} className="text-xl text-amber-500 hover:text-2xl cursor-pointer select-none">★</span>
+                        <span onClick={() => {RateGame(gameList.GameID)}} className="text-xl text-amber-500 hover:text-2xl cursor-pointer select-none">★</span>
                         <span className="mx-1 px-2 font-sans bg-white rounded-md pointer-events-none select-none">{gameList.AvgRating}</span>
                     </div>
                     </div>
@@ -147,17 +169,9 @@ function HomePage(){
                 </div>   
             </div>
             
-            {/* open genre */}
-            {openGenre && (
-                <div className="fixed bg-white border-2 border-black p-4 mt-4 w-72 h-48 z-50 rounded-lg">
-                  <div className="flex justify-between">
-                    <h1 className="select-none"><b>Select Genre</b></h1>
-                    <h1 onClick={() => {setOpenGenre(false)}} className=" text-red-700 cursor-pointer select-none"><b>x</b></h1>
-                  </div>
-                  <div className="flex flex-wrap">test</div>
-
-                </div>
-            )}
+            {/* Rate the game */}
+            {openRating &&
+                <StarRating setOpenRating = {setOpenRating} gameId = {gameId}/>}
         </div>
     );
 }
