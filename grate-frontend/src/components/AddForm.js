@@ -145,7 +145,7 @@ function AddForm(){
     </div>
 
     <div className="relative mx-auto w-64 p-4 text-center mt-2">
-        <Link to="/" className="text-red-600 hover:text-red-950">Back to Home</Link>
+      <Link to="/" className="text-red-600 hover:text-red-950">Back to Home</Link>
     </div>
 
     {/* open genre */}

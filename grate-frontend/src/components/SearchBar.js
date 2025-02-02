@@ -27,7 +27,7 @@ function SearchBar(){
     return(
             <div className="bg-amber-400 m-2 mt-14 border-2 border-black flex justify-between">
                 <div className="flex">
-                    <input type="text" onChange={e => setSearchResult(e.target.value)} placeholder="Search" className="my-2 ml-2 pl-2"/>
+                    <input id="searchitem" type="text" onChange={e => setSearchResult(e.target.value)} placeholder="Search" className="my-2 ml-2 pl-2"/>
                     <button className="bg-white my-2">
                         <img src= {SearchLogo} alt = "lookupSearch" className="w-7 h-7"/>
                     </button>
@@ -45,8 +45,8 @@ function SearchBar(){
                       <span className={`w-4 h-4 flex items-center justify-center rounded-full transition transform duration-300 ease-in-out ${remove ? 'translate-x-6 bg-white' : 'bg-white text-red-500'}`}><b>-</b></span>
                     </button>
 
-                    <label>Category:</label>
-                    <select onChange={e=>setCategory(e.target.value)}>
+                    <h1>Category:</h1>
+                    <select id="categoryset" onChange={e=>setCategory(e.target.value)}>
                         <option value="">All</option>
                         {
                             tagLists.map(tagList => (
@@ -54,8 +54,8 @@ function SearchBar(){
                             ))
                         }
                     </select>
-                    <label>Sort:</label>
-                    <select value={sortOption} onChange={e => setSortOption(e.target.value)}>
+                    <h1>Sort:</h1>
+                    <select id="sortset" value={sortOption} onChange={e => setSortOption(e.target.value)}>
                         <option value="">--Sort Option--</option>
                         <option value="AZ">A-Z</option>
                         <option value="RDate">Release Date</option>
